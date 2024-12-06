@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="250dp"
+    android:layout_height="400dp"
+    android:layout_margin="10dp"
+    android:layout_marginStart="20dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="@color/white"> <!-- Use app:cardBackgroundColor -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Lawyer Name -->
+        <TextView
+            android:id="@+id/textItemName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="Lawyer's Name" />
+
+        <!-- Law Category -->
+        <TextView
+            android:id="@+id/textItemCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Law Category" />
+
+        <!-- Years of Experience -->
+        <TextView
+            android:id="@+id/textItemExperience"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Experience: X years" />
+
+        <!-- Consultation Fee -->
+        <TextView
+            android:id="@+id/textItemFee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Consultation Fee: ₱XXXX" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

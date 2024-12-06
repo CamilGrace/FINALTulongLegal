@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomCalendar">
+        <attr name="compact_calendar_backgroundColor" format="color"/>
+        <attr name="compact_calendar_currentSelectedDayBackgroundColor" format="color"/>
+        <attr name="compact_calendar_textColor" format="color"/>
+    </declare-styleable>
+</resources>

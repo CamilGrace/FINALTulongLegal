@@ -1,0 +1,54 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:orientation="vertical"
+    android:background="@color/light_gray"
+    android:padding="16dp">
+
+    <!-- Profile Picture -->
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:src="@drawable/profile_placeholder"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle_background"
+        android:onClick="changeProfileImage"/>
+
+    <!-- User Name -->
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:text="Elena Carter"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <!-- Verification Status -->
+    <TextView
+        android:id="@+id/verification_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Not verified"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"/>
+
+    <!-- Verify Button -->
+    <Button
+        android:id="@+id/verify_profile_button"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:backgroundTint="@color/black"
+        android:text="Verify Profile"
+        android:textColor="@android:color/white"
+        android:textSize="10sp"
+        android:onClick="verifyProfile"/>
+</LinearLayout>

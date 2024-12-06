@@ -1,0 +1,6 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Green background when selected -->
+    <item android:drawable="@drawable/container_frame" android:state_selected="true" />
+    <!-- Default background when not selected -->
+    <item android:drawable="@drawable/container_frame_client" />
+</selector>

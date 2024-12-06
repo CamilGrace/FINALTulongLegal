@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "339144622266",
+    "project_id": "tulonglegal-a7491",
+    "storage_bucket": "tulonglegal-a7491.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:339144622266:android:d48b6c5949f84983438283",
+        "android_client_info": {
+          "package_name": "com.example.tulonglegal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmAhUr0gpyAJqNOkGlp30dvys6TxWo908"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

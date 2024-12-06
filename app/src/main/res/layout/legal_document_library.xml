@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/client_dashboard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dahsboard_bg">
+
+        <ImageView
+            android:id="@+id/img_menu"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="top|left"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_menu_foreground" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- LinearLayout for TulongLegal -->
+            <LinearLayout
+                android:id="@+id/linear_tulong_legal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="60dp"
+                android:gravity="center_vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/img_screenshot_removebg_preview"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/logo_transparent" />
+
+                <TextView
+                    android:id="@+id/text_tulong_legal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:lineHeight="39.01dp"
+                    android:text="Legal Document \nLibrary"
+                    android:textColor="#FFFBFBFB"
+                    android:textSize="30sp" />
+            </LinearLayout>
+
+            <!-- Scrollable Content -->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/linear_tulong_legal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+
+                    <!-- Search Bar -->
+                    <EditText
+                        android:id="@+id/searchBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Search documents..."
+                        android:padding="12dp"
+                        android:background="@drawable/search_background"
+                        android:drawableStart="@drawable/ic_search"
+                        android:drawablePadding="8dp" />
+
+                    <!-- Contracts Section -->
+                    <TextView
+                        android:id="@+id/contractsHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contracts"
+                        android:textColor="#00292D"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="8dp" />
+
+                    <!-- Employment Contract Card -->
+                    <LinearLayout
+                        android:id="@+id/employmentContractCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="#FFFFFF"
+                        android:padding="12dp"
+                        android:layout_marginBottom="8dp"
+                        android:elevation="4dp"
+                        android:clickable="true">
+
+                        <TextView
+                            android:id="@+id/employmentContractTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Employment Contract"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:paddingBottom="4dp" />
+
+                        <TextView
+                            android:id="@+id/employmentContractDesc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="A legal agreement outlining the terms, duties, and conditions between an employer and employee."
+                            android:textSize="14sp"
+                            android:textColor="#757575" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/leaseAgreement"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="#FFFFFF"
+                        android:padding="12dp"
+                        android:layout_marginBottom="8dp"
+                        android:elevation="4dp"
+                        android:clickable="true">
+
+                        <TextView
+                            android:id="@+id/leaseAgreementTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Employment Contract"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:paddingBottom="4dp" />
+
+                        <TextView
+                            android:id="@+id/leaseAgreementDesc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="A contract between a landlord and tenant detailing terms for renting property or space."
+                            android:textSize="14sp"
+                            android:textColor="#757575" />
+                    </LinearLayout>
+
+                    <!-- Contracts Section -->
+                    <TextView
+                        android:id="@+id/legalnoticesHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Legal Notices"
+                        android:textColor="#00292D"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="8dp" />
+
+                    <!-- Employment Contract Card -->
+                    <LinearLayout
+                        android:id="@+id/terminationCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="#FFFFFF"
+                        android:padding="12dp"
+                        android:layout_marginBottom="8dp"
+                        android:elevation="4dp"
+                        android:clickable="true">
+
+                        <TextView
+                            android:id="@+id/terminationTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Notice of Termination"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:paddingBottom="4dp" />
+
+                        <TextView
+                            android:id="@+id/terminationDesc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="A formal letter informing an employee that their employment will end on a specified date."
+                            android:textSize="14sp"
+                            android:textColor="#757575" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ceaseanddesistCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="#FFFFFF"
+                        android:padding="12dp"
+                        android:layout_marginBottom="8dp"
+                        android:elevation="4dp"
+                        android:clickable="true">
+
+                        <TextView
+                            android:id="@+id/ceaseanddesistTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cease and Desist Letter"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:paddingBottom="4dp" />
+
+                        <TextView
+                            android:id="@+id/ceaseanddesistDesc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="A formal notice demanding the recipient stop unlawful activity, with legal action threatened if ignored."
+                            android:textSize="14sp"
+                            android:textColor="#757575" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            app:itemIconSize="40dp"
+            android:background="@android:color/white"
+            style="@style/AppTheme.BottomNavigation"
+            app:itemIconTint="@color/black"
+            app:itemTextColor="@color/black"
+            app:itemBackground="@drawable/bottom_navigation_indicator"
+            app:menu="@menu/bottom_nav_menu"
+            app:itemRippleColor="@android:color/transparent"
+            app:labelVisibilityMode="unlabeled"
+
+            />
+    </FrameLayout>
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/white"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu"
+        />
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">TULONGLEGAL</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string-array name="legal_categories">
+        <item>Family Law</item>
+        <item>Criminal Law</item>
+        <item>Corporate Law</item>
+        <item>Intellectual Property</item>
+        <item>Immigration</item>
+        <item>Real Estate</item>
+    </string-array>
+
+</resources>
