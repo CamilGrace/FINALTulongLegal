@@ -33,7 +33,10 @@ class LawyerRegistrationActivity : AppCompatActivity() {
 
         // Enable register button only when the checkbox is checked
         binding.checkBox.setOnCheckedChangeListener { _, isChecked ->
-            binding.registerButton.isEnabled = isChecked
+            binding.registerButton.apply {
+                isEnabled = isChecked
+                setBackgroundResource(if (isChecked) R.drawable.button_enabled else R.drawable.button_disabled)
+            }
         }
 
         // Set up TextWatchers for input validation

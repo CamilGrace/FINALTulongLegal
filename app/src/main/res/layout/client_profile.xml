@@ -88,7 +88,7 @@
 
             <LinearLayout
                 android:id="@+id/user_info_layout"
-                android:layout_width="358dp"
+                android:layout_width="400dp"
                 android:layout_height="178dp"
                 android:gravity="center_vertical"
                 app:layout_constraintEnd_toEndOf="parent"

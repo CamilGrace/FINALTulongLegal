@@ -282,7 +282,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_gravity="bottom"
-            app:itemIconSize="25dp"
+            app:itemIconSize="40dp"
             android:background="@android:color/white"
             style="@style/AppTheme.BottomNavigation"
             app:itemIconTint="@color/black"

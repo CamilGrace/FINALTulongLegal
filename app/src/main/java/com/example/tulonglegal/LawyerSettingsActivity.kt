@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.tulonglegal.databinding.ClientSettingsBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class ClientSettingsActivity : AppCompatActivity() {
+class LawyerSettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ClientSettingsBinding
 
@@ -28,12 +28,12 @@ class ClientSettingsActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.person -> {
                     // Navigate to Profile Activity
-                    startActivity(Intent(this, ClientInboxActivity::class.java))
+                    startActivity(Intent(this, LawyerInboxActivity::class.java))
                     true
                 }
                 R.id.home -> {
                     // Navigate to Dashboard Activity
-                    startActivity(Intent(this, ClientDashboardActivity::class.java))
+                    startActivity(Intent(this, LawyerDashboardActivity::class.java))
                     true
                 }
                 R.id.settings -> {

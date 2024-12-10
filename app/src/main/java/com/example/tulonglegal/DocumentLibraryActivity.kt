@@ -2,16 +2,22 @@ package com.example.tulonglegal
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.tulonglegal.databinding.ActivityDocumentDetailBinding
+import com.example.tulonglegal.databinding.LegalDocumentLibraryBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class DocumentLibraryActivity : AppCompatActivity() {
 
+    private lateinit var firestore: FirebaseFirestore
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -26,6 +32,8 @@ class DocumentLibraryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.legal_document_library)
+        var binding = LegalDocumentLibraryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Initialize Views
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -39,20 +47,34 @@ class DocumentLibraryActivity : AppCompatActivity() {
         ceaseAndDesistCard = findViewById(R.id.ceaseanddesistCard)
         linearTulongLegal = findViewById(R.id.linear_tulong_legal)
 
+        firestore = FirebaseFirestore.getInstance()
+
+        // Fetch and update the user's name in the navigation drawer header
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        userId?.let { loadUserData(it) }
+
         // Open navigation drawer when menu icon is clicked
         imgMenu.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
+        // Handle Drawer NavigationItem selection
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_profile -> {
                     // Navigate to Profile Activity
                     startActivity(Intent(this, ClientProfileActivity::class.java))
                 }
+                R.id.nav_inbox -> {
+                    // Navigate to Inbox Activity
+                    startActivity(Intent(this, ClientInboxActivity::class.java))
+                }
                 R.id.nav_settings -> {
                     // Navigate to Settings Activity
                     startActivity(Intent(this, ClientSettingsActivity::class.java))
+                }
+                R.id.nav_signout -> {
+                    signOutUser()
                 }
             }
 
@@ -65,7 +87,6 @@ class DocumentLibraryActivity : AppCompatActivity() {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.person -> {
-                    // Navigate to Profile Activity
                     startActivity(Intent(this, ClientProfileActivity::class.java))
                     true
                 }
@@ -74,7 +95,6 @@ class DocumentLibraryActivity : AppCompatActivity() {
                     true
                 }
                 R.id.settings -> {
-                    // Navigate to Settings Activity
                     startActivity(Intent(this, ClientSettingsActivity::class.java))
                     true
                 }
@@ -82,22 +102,34 @@ class DocumentLibraryActivity : AppCompatActivity() {
             }
         }
 
-        // Set click listeners for card components
-        employmentContractCard.setOnClickListener {
-            Toast.makeText(this, "Employment Contract selected", Toast.LENGTH_SHORT).show()
+        // Create a common OnClickListener for all document cards
+        val cardClickListener = View.OnClickListener { view ->
+            val intent = Intent(this, DocumentDetailActivity::class.java)
+
+            // Pass the document type as an extra
+            when (view.id) {
+                R.id.employmentContractCard -> {
+                    intent.putExtra("DOCUMENT_TYPE", "Employment Contract")
+                }
+                R.id.leaseAgreement -> {
+                    intent.putExtra("DOCUMENT_TYPE", "Lease Agreement")
+                }
+                R.id.terminationCard -> {
+                    intent.putExtra("DOCUMENT_TYPE", "Notice of Termination")
+                }
+                R.id.ceaseanddesistCard -> {
+                    intent.putExtra("DOCUMENT_TYPE", "Cease and Desist Letter")
+                }
+            }
+
+            startActivity(intent)
         }
 
-        leaseAgreementCard.setOnClickListener {
-            Toast.makeText(this, "Lease Agreement selected", Toast.LENGTH_SHORT).show()
-        }
-
-        terminationCard.setOnClickListener {
-            Toast.makeText(this, "Notice of Termination selected", Toast.LENGTH_SHORT).show()
-        }
-
-        ceaseAndDesistCard.setOnClickListener {
-            Toast.makeText(this, "Cease and Desist Letter selected", Toast.LENGTH_SHORT).show()
-        }
+        // Set the common click listener for all cards
+        employmentContractCard.setOnClickListener(cardClickListener)
+        leaseAgreementCard.setOnClickListener(cardClickListener)
+        terminationCard.setOnClickListener(cardClickListener)
+        ceaseAndDesistCard.setOnClickListener(cardClickListener)
 
         // Handle search bar input
         searchBar.setOnEditorActionListener { _, _, _ ->
@@ -105,20 +137,25 @@ class DocumentLibraryActivity : AppCompatActivity() {
             Toast.makeText(this, "Searching for: $query", Toast.LENGTH_SHORT).show()
             true
         }
-
-        // Handle "Tulong Legal" banner click
-        linearTulongLegal.setOnClickListener {
-            Toast.makeText(this, "TulongLegal clicked", Toast.LENGTH_SHORT).show()
-        }
     }
 
-    // Handle back button to close the drawer if open
-    override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
+    private fun loadUserData(userId: String) {
+        firestore.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val user = document.toObject(UserProfile::class.java)
+                    user?.let {
+                        // Update the navigation header with the user's full name
+                        val headerView = navigationView.getHeaderView(0)
+                        val userNameTextView: TextView = headerView.findViewById(R.id.user_name)
+                        userNameTextView.text = it.fullName
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun signOutUser() {
@@ -132,5 +169,4 @@ class DocumentLibraryActivity : AppCompatActivity() {
         startActivity(intent)
         finish() // Close the current activity
     }
-
 }

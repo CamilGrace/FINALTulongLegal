@@ -1,5 +1,6 @@
 package com.example.tulonglegal
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,21 +11,36 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.tulonglegal.databinding.MatchesFoundBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MatchesFoundActivity : AppCompatActivity() {
 
+    private lateinit var binding: MatchesFoundBinding
     private lateinit var firestore: FirebaseFirestore
     private lateinit var lawyerList: List<Lawyer> // To hold the fetched lawyers data
     private lateinit var selectedLegalCategory: String // Category passed from LawyerMatchingActivity
+    private var selectedGender: String? = null // Gender preference
+    private var maxYearsOfExperience: Int = Int.MAX_VALUE // Maximum years of experience
+    private var maxConsultationFee: Double = Double.MAX_VALUE // Maximum consultation fee
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.matches_found)
+        binding = MatchesFoundBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Get the selected legal category from the Intent
+        // Handle Back Button click
+        binding.imageBack.setOnClickListener {
+            finish() // Close the activity and go back to the previous screen
+        }
+
+        // Get preferences and legal category from the Intent
         selectedLegalCategory = intent.getStringExtra("selectedLegalCategory") ?: ""
+        selectedGender = intent.getStringExtra("selectedGender") // e.g., "Male" or "Female"
+        maxYearsOfExperience = intent.getIntExtra("maxYearsOfExperience", Int.MAX_VALUE)
+        maxConsultationFee = intent.getDoubleExtra("maxConsultationFee", Double.MAX_VALUE)
 
         firestore = FirebaseFirestore.getInstance()
 
@@ -32,7 +48,7 @@ class MatchesFoundActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.carouselRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        // Attach PagerSnapHelper for centering the cards (both start and end)
+        // Attach PagerSnapHelper for centering the cards
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(recyclerView)
 
@@ -40,7 +56,6 @@ class MatchesFoundActivity : AppCompatActivity() {
         fetchLawyersData(recyclerView)
     }
 
-    // Fetch Lawyers data from Firestore
     private fun fetchLawyersData(recyclerView: RecyclerView) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         userId?.let {
@@ -51,24 +66,28 @@ class MatchesFoundActivity : AppCompatActivity() {
                         document.toObject(Lawyer::class.java)
                     }
 
-                    // Filter the lawyers based on the selected legal category
                     val filteredLawyers = lawyerList.filter { lawyer ->
-                        lawyer.legalspecialization.contains(selectedLegalCategory, ignoreCase = true)
+                        (selectedGender == null || lawyer.gender.equals(selectedGender, ignoreCase = true)) &&
+                                lawyer.legalspecialization.contains(selectedLegalCategory, ignoreCase = true) &&
+                                lawyer.yearsofexp <= maxYearsOfExperience &&
+                                lawyer.consultationfee <= maxConsultationFee
                     }
 
-                    // If no matches found, display "No Matches Found"
                     val noMatchesTextView = findViewById<TextView>(R.id.textNoMatchesFound)
                     if (filteredLawyers.isEmpty()) {
                         noMatchesTextView.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE // Hide RecyclerView
+                        recyclerView.visibility = View.GONE
                     } else {
                         noMatchesTextView.visibility = View.GONE
                         recyclerView.visibility = View.VISIBLE
-                        // Set up the carousel adapter with the filtered data
-                        recyclerView.adapter = CarouselAdapter(filteredLawyers)
+                        recyclerView.adapter = CarouselAdapter(filteredLawyers) { selectedLawyer ->
+                            // Navigate to ClientMessagingActivity
+                            val intent = Intent(this, ClientMessagingActivity::class.java)
+                            intent.putExtra("lawyerFullName", selectedLawyer.fullName)
+                            startActivity(intent)
+                        }
                     }
 
-                    // Programmatically scroll to the first item to make sure it's centered initially
                     recyclerView.post {
                         recyclerView.scrollToPosition(0)
                     }
@@ -79,19 +98,22 @@ class MatchesFoundActivity : AppCompatActivity() {
         }
     }
 
-    // Data class for Lawyer (matches Firestore fields)
+
+    // Data class for Lawyer
     data class Lawyer(
         val fullName: String = "",
         val gender: String = "",
         val legalspecialization: String = "",
         val yearsofexp: Int = 0,
-        val consultationfee: Double = 0.0 // In pesos
+        val consultationfee: Double = 0.0
     )
 
-    // Carousel Adapter Implementation
-    class CarouselAdapter(private val items: List<Lawyer>) : RecyclerView.Adapter<CarouselAdapter.CarouselViewHolder>() {
+    // Carousel Adapter
+    class CarouselAdapter(
+        private val items: List<Lawyer>,
+        private val onLawyerSelected: (Lawyer) -> Unit // Callback for item click
+    ) : RecyclerView.Adapter<CarouselAdapter.CarouselViewHolder>() {
 
-        // ViewHolder class for the adapter
         class CarouselViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val nameTextView: TextView = itemView.findViewById(R.id.textFullname)
             val genderTextView: TextView = itemView.findViewById(R.id.textGender)
@@ -112,8 +134,14 @@ class MatchesFoundActivity : AppCompatActivity() {
             holder.lawCategoryTextView.text = lawyer.legalspecialization
             holder.experienceTextView.text = "${lawyer.yearsofexp} years of experience"
             holder.feeTextView.text = "${lawyer.consultationfee} pesos"
+
+            // Set click listener for the card
+            holder.itemView.setOnClickListener {
+                onLawyerSelected(lawyer) // Trigger callback
+            }
         }
 
         override fun getItemCount(): Int = items.size
     }
+
 }

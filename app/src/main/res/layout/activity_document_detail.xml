@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/dahsboard_bg">
 
-        <!-- Menu Button -->
+        <!-- ImageView for Menu Icon -->
         <ImageView
             android:id="@+id/img_menu"
             android:layout_width="60dp"
@@ -22,18 +22,17 @@
             android:scaleType="centerInside"
             android:src="@drawable/ic_menu" />
 
-        <!-- Content Section -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!-- LinearLayout for TulongLegal -->
             <LinearLayout
                 android:id="@+id/linear_tulong_legal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="60dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="95dp"
                 android:gravity="center_vertical"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -54,66 +53,97 @@
                     android:gravity="center_vertical"
                     android:includeFontPadding="false"
                     android:lineHeight="39.01dp"
-                    android:text="TulongLegal"
+                    android:text="Legal Document \nLibrary"
                     android:textColor="#FFFBFBFB"
                     android:textSize="30sp" />
             </LinearLayout>
 
             <FrameLayout
                 android:id="@+id/frame_card"
-                android:layout_width="350dp"
-                android:layout_height="350dp"
-                android:layout_marginTop="16dp"
+                android:layout_width="380dp"
+                android:layout_height="450dp"
+                android:layout_marginTop="50dp"
+                android:layout_gravity="center_horizontal"
                 android:background="@drawable/card_background"
                 app:layout_constraintTop_toBottomOf="@id/linear_tulong_legal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- Use ConstraintLayout inside the FrameLayout -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <androidx.coordinatorlayout.widget.CoordinatorLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginTop="15dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
 
-                        <!-- Collapsible Toolbar for the calendar -->
-                        <com.google.android.material.appbar.AppBarLayout
-                            android:id="@+id/appBarLayout"
-                            android:layout_width="match_parent"
+                        <ImageView
+                            android:id="@+id/imageBack"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_marginStart="16dp"
+                            android:src="@drawable/ic_arrow_back_green"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            />
+
+                        <TextView
+                            android:id="@+id/documentTitle"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="45dp"
+                            android:text="Document Title"
+                            android:textColor="#00292D"
+                            android:textStyle="bold"
+                            android:textSize="25sp"
+                            android:layout_marginBottom="16dp" />
 
-                            <!-- Calendar View (can be collapsed/expanded) -->
-                            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-                                android:id="@+id/calendarView"
-                                android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/documentDesc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:text="Document Description"
+                            android:textColor="#7A00292D"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:layout_marginBottom="16dp" />
+
+                        <FrameLayout
+                            android:id="@+id/container_download"
+                            android:layout_width="250dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginStart="70dp"
+                            android:background="@drawable/container_button"
+                            >
+
+                            <TextView
+                                android:id="@+id/text_start_matching"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:mcv_showOtherDates="all" />
+                                android:layout_gravity="center_horizontal"
+                                android:text="Download Form"
+                                android:textColor="#FFFBFBFB"
+                                android:textSize="15sp"
+                                android:padding="5dp"
+                                android:textStyle="bold" />
 
-                        </com.google.android.material.appbar.AppBarLayout>
+                        </FrameLayout>
 
-                    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-                    <!-- "Full Name" TextView below the calendar -->
+                    </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </FrameLayout>
 
-            <TextView
-                android:id="@+id/text_full_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Daily Schedules"
-                android:textColor="#00292D"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteX="25dp"
-                tools:layout_editor_absoluteY="509dp" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <!-- Bottom Navigation -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
@@ -127,9 +157,10 @@
             app:itemBackground="@drawable/bottom_navigation_indicator"
             app:menu="@menu/bottom_nav_menu"
             app:itemRippleColor="@android:color/transparent"
-            app:labelVisibilityMode="unlabeled" />
+            app:labelVisibilityMode="unlabeled"
+            />
     </FrameLayout>
-
+    <!-- Navigation Drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
@@ -137,5 +168,6 @@
         android:layout_gravity="start"
         android:background="@color/white"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/nav_menu" />
+        app:menu="@menu/nav_menu"
+        />
 </androidx.drawerlayout.widget.DrawerLayout>

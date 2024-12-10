@@ -2,8 +2,7 @@ package com.example.tulonglegal
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -64,11 +63,12 @@ class LawyerProfileActivity : AppCompatActivity() {
             startActivityForResult(intent, EDIT_PROFILE_REQUEST_CODE)
         }
 
-        // Drawer and Navigation setup...
+        // Get the DrawerLayout and NavigationView from the layout
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navigationView: NavigationView = binding.navigationView
         val bottomNavigationView: BottomNavigationView = binding.bottomNavigationView
 
+        // Open the Drawer when the menu icon is clicked
         binding.imgMenu.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -77,17 +77,19 @@ class LawyerProfileActivity : AppCompatActivity() {
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_profile -> {
-                    // Navigate to Profile Activity
                     startActivity(Intent(this, LawyerProfileActivity::class.java))
                 }
-                R.id.nav_settings -> {
-                    // Navigate to Settings Activity
-                    startActivity(Intent(this, ClientSettingsActivity::class.java))
+                R.id.nav_inbox -> {
+                    startActivity(Intent(this, LawyerInboxActivity::class.java))
                 }
-
+                R.id.nav_settings -> {
+                    startActivity(Intent(this, LawyerSettingsActivity::class.java))
+                }
+                R.id.nav_signout -> {
+                    signOutUser()
+                }
             }
 
-            // Close the drawer after an item is selected
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
@@ -96,8 +98,7 @@ class LawyerProfileActivity : AppCompatActivity() {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.person -> {
-                    // Navigate to Profile Activity
-                    startActivity(Intent(this, LawyerProfileActivity::class.java))
+                    startActivity(Intent(this, LawyerInboxActivity::class.java))
                     true
                 }
                 R.id.home -> {
@@ -105,7 +106,6 @@ class LawyerProfileActivity : AppCompatActivity() {
                     true
                 }
                 R.id.settings -> {
-                    // Navigate to Settings Activity
                     startActivity(Intent(this, ClientSettingsActivity::class.java))
                     true
                 }
@@ -133,6 +133,11 @@ class LawyerProfileActivity : AppCompatActivity() {
                         userLawSchool.text = it.lawschool
                         userYearsOfExperience.text = it.yearsofexp.toString()
                         userConsultationFee.text = it.consultationfee.toString()
+
+                        // Update the navigation header with the user's full name
+                        val headerView = binding.navigationView.getHeaderView(0)
+                        val userNameTextView: TextView = headerView.findViewById(R.id.user_name)
+                        userNameTextView.text = it.fullName
                     }
                 }
             }
@@ -146,7 +151,6 @@ class LawyerProfileActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Update the profile with the data returned from the edit activity
             data?.let {
                 userFullName.text = it.getStringExtra("fullName")
                 userEmail.text = it.getStringExtra("email")
@@ -161,6 +165,11 @@ class LawyerProfileActivity : AppCompatActivity() {
                 userYearsOfExperience.text = it.getIntExtra("yearsofexp", 0).toString()
                 userConsultationFee.text = it.getIntExtra("consultationfee", 0).toString()
 
+                // Update the navigation header with the updated user's full name
+                val headerView = binding.navigationView.getHeaderView(0)
+                val userNameTextView: TextView = headerView.findViewById(R.id.user_name)
+                userNameTextView.text = it.getStringExtra("fullName")
+
                 Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
             }
         }
@@ -170,5 +179,17 @@ class LawyerProfileActivity : AppCompatActivity() {
         super.onResume()
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         userId?.let { loadUserData(it) }
+    }
+
+    private fun signOutUser() {
+        // Clear user session data (if using SharedPreferences or other storage)
+        val sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply()
+
+        // Redirect to LoginActivity
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK // Clear activity stack
+        startActivity(intent)
+        finish() // Close the current activity
     }
 }

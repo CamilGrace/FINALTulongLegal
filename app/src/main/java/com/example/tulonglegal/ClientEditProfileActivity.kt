@@ -18,6 +18,11 @@ class ClientEditProfileActivity : AppCompatActivity() {
         binding = ClientEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Handle Back Button click
+        binding.imageBack.setOnClickListener {
+            finish() // Close the activity and go back to the previous screen
+        }
+
         firestore = FirebaseFirestore.getInstance()
 
         // Enable save button only when the required fields are filled
