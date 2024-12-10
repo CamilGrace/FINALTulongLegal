@@ -2,37 +2,56 @@ package com.example.tulonglegal
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.tulonglegal.databinding.ClientProfileBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ClientProfileActivity : AppCompatActivity() {
-
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var userEmail: TextView
+    private lateinit var userContact: TextView
+    private lateinit var userFullName: TextView
+    private lateinit var userAddress: TextView
     private lateinit var binding: ClientProfileBinding
+
+    companion object {
+        const val EDIT_PROFILE_REQUEST_CODE = 100
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ClientProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val username = intent.getStringExtra("username")
+        firestore = FirebaseFirestore.getInstance()
 
-        if (username != null) {
-            binding.textFullName.text = sharedPreferences.getString("${username}_name", "N/A")
-            binding.textEmail.text = sharedPreferences.getString("${username}_email", "N/A")
-            binding.textContact.text = sharedPreferences.getString("${username}_contact", "N/A")
+        userFullName = findViewById(R.id.text_full_name)
+        userEmail = findViewById(R.id.user_email)
+        userContact = findViewById(R.id.user_contact)
+        userAddress = findViewById(R.id.user_address)
+
+        // Fetch and display initial user data
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        userId?.let { loadUserData(it) }
+
+        // Handle Edit Profile Button
+        binding.editProfileBtn.setOnClickListener {
+            val intent = Intent(this, ClientEditProfileActivity::class.java)
+            startActivity(intent)
         }
 
-        // Get the DrawerLayout and NavigationView from the layout
+        // Drawer and Navigation setup...
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navigationView: NavigationView = binding.navigationView
         val bottomNavigationView: BottomNavigationView = binding.bottomNavigationView
 
-        // Open the Drawer when the menu icon is clicked
         binding.imgMenu.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -49,10 +68,6 @@ class ClientProfileActivity : AppCompatActivity() {
                     startActivity(Intent(this, ClientSettingsActivity::class.java))
                 }
 
-                R.id.nav_sign_out -> {
-                    // Sign out the user and navigate to LoginActivity
-                    signOutUser()
-                }
             }
 
             // Close the drawer after an item is selected
@@ -64,10 +79,12 @@ class ClientProfileActivity : AppCompatActivity() {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.person -> {
+                    // Navigate to Profile Activity
+                    startActivity(Intent(this, ClientProfileActivity::class.java))
                     true
                 }
                 R.id.home -> {
-                    startActivity(Intent(this, ClientProfileActivity::class.java))
+                    startActivity(Intent(this, ClientDashboardActivity::class.java))
                     true
                 }
                 R.id.settings -> {
@@ -80,36 +97,28 @@ class ClientProfileActivity : AppCompatActivity() {
         }
     }
 
-    // Override onResume to set the selected item on bottom navigation
-    override fun onResume() {
-        super.onResume()
-
-        // Get the current BottomNavigationView
-        val bottomNavigationView: BottomNavigationView = binding.bottomNavigationView
-
-        // Manually set the selected item to the correct position when returning
-        when (intent?.getIntExtra("SELECTED_ITEM", R.id.home)) {
-            R.id.settings -> {
-                bottomNavigationView.selectedItemId = R.id.settings
+    private fun loadUserData(userId: String) {
+        firestore.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val user = document.toObject(UserProfile::class.java)
+                    user?.let {
+                        userFullName.text = it.fullName
+                        userEmail.text = it.email
+                        userContact.text = it.contactNo
+                        userAddress.text = it.address
+                    }
+                }
             }
-            R.id.person -> {
-                bottomNavigationView.selectedItemId = R.id.person
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
-            else -> {
-                bottomNavigationView.selectedItemId = R.id.home
-            }
-        }
     }
 
-    private fun signOutUser() {
-        // Clear user session data (if using SharedPreferences or other storage)
-        val sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE)
-        sharedPreferences.edit().clear().apply()
-
-        // Redirect to LoginActivity
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK // Clear activity stack
-        startActivity(intent)
-        finish() // Close the current activity
+    override fun onResume() {
+        super.onResume()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        userId?.let { loadUserData(it) }
     }
 }

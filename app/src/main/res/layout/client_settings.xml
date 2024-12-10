@@ -8,11 +8,11 @@
 
     <ImageView
         android:id="@+id/imageBack"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginTop="32dp"
         android:layout_marginStart="16dp"
-        android:src="@drawable/ic_arrow_black_foreground"
+        android:src="@drawable/ic_arrow_back_green"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
@@ -33,7 +33,7 @@
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_settings_foreground" />
+            android:src="@drawable/ic_settings_green" />
 
         <TextView
             android:id="@+id/text_lawyer_matching"
@@ -100,7 +100,7 @@
                 android:id="@+id/switchShowLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Show location to users"
+                android:text="Show address to users"
                 android:textColor="#00292D"
                 android:thumbTint="#0C9B79"/>
 
@@ -136,14 +136,6 @@
                 android:textColor="#00292D"
                 android:thumbTint="#0C9B79"/>
 
-            <Switch
-                android:id="@+id/switchCalendarNotifications"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Enable calendar notifications"
-                android:textColor="#00292D"
-                android:thumbTint="#0C9B79"/>
-
         </LinearLayout>
     </ScrollView>
 
@@ -152,7 +144,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="bottom"
-        app:itemIconSize="40dp"
+        app:itemIconSize="25dp"
         android:background="@android:color/white"
         style="@style/AppTheme.BottomNavigation"
         app:itemIconTint="@color/black"

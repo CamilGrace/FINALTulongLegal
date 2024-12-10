@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.widget.addTextChangedListener
-import com.example.tulonglegal.databinding.LawyerLoginBinding
 import com.example.tulonglegal.databinding.LawyerMatchingBinding
 
 class LawyerMatchingActivity : AppCompatActivity() {
@@ -20,6 +19,9 @@ class LawyerMatchingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lawyer_matching)
+
+        binding = LawyerMatchingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Set up the "Back" button functionality
         binding.imageBack.setOnClickListener {
@@ -63,9 +65,21 @@ class LawyerMatchingActivity : AppCompatActivity() {
 
         // Handle Find My Lawyer button click
         btnFindMyLawyer.setOnClickListener {
-            // Navigate to the MatchesFoundActivity
-            val intent = Intent(this, MatchesFoundActivity::class.java)
-            startActivity(intent)
+            // Get the selected legal category from the spinner
+            val selectedLegalCategory = spinnerLegalCategory.selectedItem.toString()
+
+            // Ensure additional details are entered
+            val additionalDetails = additionalDetailsEditText.text.toString()
+
+            // If valid inputs, pass the selected category to the next activity
+            if (selectedLegalCategory.isNotEmpty() && additionalDetails.isNotEmpty()) {
+                val intent = Intent(this, MatchesFoundActivity::class.java)
+                intent.putExtra("selectedLegalCategory", selectedLegalCategory)  // Pass the selected category
+                startActivity(intent)
+            } else {
+                // Show a message if inputs are not valid
+                Toast.makeText(applicationContext, "Please select a category and provide additional details", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

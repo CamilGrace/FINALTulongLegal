@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.tulonglegal.databinding.RoleRegistrationBinding
 
-class RoleRegistrationActivity : AppCompatActivity() {
+class RoleSelectionActivity : AppCompatActivity() {
 
     private lateinit var binding: RoleRegistrationBinding
 
@@ -35,7 +35,7 @@ class RoleRegistrationActivity : AppCompatActivity() {
             // Set click listener for the continue button
             binding.lawyerLogin.setOnClickListener {
                 // Navigate to ClientRegistrationActivity
-                val intent = Intent(this@RoleRegistrationActivity, ClientRegistrationActivity::class.java)
+                val intent = Intent(this@RoleSelectionActivity, ClientRegistrationActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -51,7 +51,7 @@ class RoleRegistrationActivity : AppCompatActivity() {
             // Set click listener for the continue button
             binding.lawyerLogin.setOnClickListener {
                 // Navigate to LawyerRegistrationActivity
-                val intent = Intent(this@RoleRegistrationActivity, LawyerRegistrationActivity::class.java)
+                val intent = Intent(this@RoleSelectionActivity, LawyerRegistrationActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -64,12 +64,12 @@ class RoleRegistrationActivity : AppCompatActivity() {
         } else {
             R.drawable.button_disabled // Disabled button background
         }
-        button.background = ContextCompat.getDrawable(this@RoleRegistrationActivity, buttonBackground)
+        button.background = ContextCompat.getDrawable(this@RoleSelectionActivity, buttonBackground)
 
         val buttonTextColor = if (isEnabled) {
-            ContextCompat.getColor(this@RoleRegistrationActivity, android.R.color.white) // White text when enabled
+            ContextCompat.getColor(this@RoleSelectionActivity, android.R.color.white) // White text when enabled
         } else {
-            ContextCompat.getColor(this@RoleRegistrationActivity, android.R.color.black) // Black text when disabled
+            ContextCompat.getColor(this@RoleSelectionActivity, android.R.color.black) // Black text when disabled
         }
         button.setTextColor(buttonTextColor)
     }

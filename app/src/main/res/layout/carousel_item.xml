@@ -8,47 +8,137 @@
     android:layout_marginStart="20dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="6dp"
-    app:cardBackgroundColor="@color/white"> <!-- Use app:cardBackgroundColor -->
+    app:cardBackgroundColor="#EDC7CFD0"> <!-- Use app:cardBackgroundColor -->
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="20dp">
+        >
 
-        <!-- Lawyer Name -->
         <TextView
-            android:id="@+id/textItemName"
+            android:id="@+id/textFullname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:text="Full Name"
+            android:textColor="#FF01212E"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textGender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="16dp"
+            android:text="Gender"
+            android:textColor="#7A00292D"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textFullname"/>
+
+        <TextView
+            android:id="@+id/textLegal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:text="Legal Specialization:"
+            android:textColor="#FF01212E"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:text="Lawyer's Name" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textGender"/>
 
-        <!-- Law Category -->
         <TextView
-            android:id="@+id/textItemCategory"
+            android:id="@+id/userLegal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="Law Category" />
+            android:layout_marginStart="25dp"
+            android:text="Legal Specialization:"
+            android:textColor="#7A00292D"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textLegal"/>
 
-        <!-- Years of Experience -->
         <TextView
-            android:id="@+id/textItemExperience"
+            android:id="@+id/textAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:text="Experience: X years" />
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:text="Office Address:"
+            android:textColor="#FF01212E"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userLegal"/>
 
-        <!-- Consultation Fee -->
         <TextView
-            android:id="@+id/textItemFee"
+            android:id="@+id/userAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="Consultation Fee: ₱XXXX" />
-    </LinearLayout>
+            android:layout_marginStart="25dp"
+            android:text="Office Address:"
+            android:textColor="#7A00292D"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textAddress"/>
 
+        <TextView
+            android:id="@+id/textYearsofExp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:text="Years of Experience:"
+            android:textColor="#FF01212E"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userAddress"/>
+
+        <TextView
+            android:id="@+id/userYearsofExp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:text="Years of Experience:"
+            android:textColor="#7A00292D"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textYearsofExp"/>
+
+        <TextView
+            android:id="@+id/textConsultationFee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:text="Consultation Fee:"
+            android:textColor="#FF01212E"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userYearsofExp"/>
+
+        <TextView
+            android:id="@+id/userConsultationFee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:text="Consultation Fee"
+            android:textColor="#7A00292D"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textConsultationFee"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -19,7 +19,7 @@
             android:layout_marginTop="20dp"
             android:layout_gravity="top|left"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_menu_foreground" />
+            android:src="@drawable/ic_menu" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -138,7 +138,7 @@
                             android:id="@+id/leaseAgreementTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Employment Contract"
+                            android:text="Lease Ageement"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:paddingBottom="4dp" />

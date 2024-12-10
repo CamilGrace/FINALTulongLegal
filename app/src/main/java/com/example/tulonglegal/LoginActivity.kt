@@ -1,116 +1,108 @@
 package com.example.tulonglegal
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.example.tulonglegal.databinding.UserLoginBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: UserLoginBinding
-    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = UserLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        auth = FirebaseAuth.getInstance()
 
-        // Adding TextWatcher to username and password input fields
-        binding.usernameEditText.addTextChangedListener(loginTextWatcher)
-        binding.passwordEditText.addTextChangedListener(loginTextWatcher)
+        // Enable login button only when both fields are filled
+        binding.usernameEditText.addTextChangedListener(textWatcher)
+        binding.passwordEditText.addTextChangedListener(textWatcher)
 
-        // Set up the listener for "Login for Legal Professionals"
+        // Login button logic
+        binding.loginButton.setOnClickListener { loginUser() }
+
+        // Navigate to Lawyer Login
         binding.lawyerLogin.setOnClickListener {
-            // Navigate to LawyerLoginActivity
-            val intent = Intent(this, LawyerLoginActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, LawyerLoginActivity::class.java))
         }
 
-        // Handle Login Button Click
-        binding.loginButton.setOnClickListener {
-            val usernameInput = binding.usernameEditText.text.toString().trim()
-            val passwordInput = binding.passwordEditText.text.toString().trim()
-
-            // Check if input fields are valid
-            if (usernameInput.isNotEmpty() && passwordInput.isNotEmpty()) {
-                // Show Progress Bar
-                showProgressBar(true)
-
-                // Simulate login verification (replace with actual logic)
-                val storedPassword = sharedPreferences.getString(usernameInput, null)
-                if (storedPassword == passwordInput) {
-                    // Navigate to ClientDashboardActivity
-                    val intent = Intent(this, ClientDashboardActivity::class.java)
-                    startActivity(intent)
-                    finish()  // Close the login screen
-                } else {
-                    // Handle login failure
-                    Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show()
-                }
-
-                // Hide Progress Bar after login attempt
-                showProgressBar(false)
-            } else {
-                // Handle empty username/password
-                Toast.makeText(this, "Please fill in both fields", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        // Navigate to Registration Screen
+        // Navigate to Registration
         binding.signupText.setOnClickListener {
-            val intent = Intent(this, ClientRegistrationActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, RoleSelectionActivity::class.java))
         }
     }
 
-    // TextWatcher to enable or disable login button based on input
-    private val loginTextWatcher = object : TextWatcher {
+    private val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val usernameInput = binding.usernameEditText.text.toString().trim()
-            val passwordInput = binding.passwordEditText.text.toString().trim()
-
-            // Enable the login button only if both fields are not empty
-            val isInputValid = usernameInput.isNotEmpty() && passwordInput.isNotEmpty()
-            binding.loginButton.isEnabled = isInputValid
-
-            // Change button background based on its state
-            val buttonBackground = if (isInputValid) {
-                R.drawable.button_enabled // Your enabled button background
-            } else {
-                R.drawable.button_disabled // Your disabled button background
-            }
-            binding.loginButton.background = ContextCompat.getDrawable(this@LoginActivity, buttonBackground)
-
-            // Change button text color based on its state
-            val buttonTextColor = if (isInputValid) {
-                ContextCompat.getColor(this@LoginActivity, android.R.color.white) // White text when enabled
-            } else {
-                ContextCompat.getColor(this@LoginActivity, android.R.color.black) // Dark gray text when disabled
-            }
-            binding.loginButton.setTextColor(buttonTextColor)
+            val isButtonEnabled = binding.usernameEditText.text.toString().isNotEmpty() &&
+                    binding.passwordEditText.text.toString().isNotEmpty()
+            binding.loginButton.isEnabled = isButtonEnabled
+            binding.loginButton.setBackgroundResource(
+                if (isButtonEnabled) R.drawable.button_enabled else R.drawable.button_disabled
+            )
         }
 
         override fun afterTextChanged(s: Editable?) {}
     }
 
-    // Function to show or hide the progress bar
-    private fun showProgressBar(show: Boolean) {
-        if (show) {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.loginButton.isEnabled = false // Disable login button while loading
-        } else {
-            binding.progressBar.visibility = View.GONE
-            binding.loginButton.isEnabled = true // Enable login button after loading
-        }
+    private fun loginUser() {
+        val username = binding.usernameEditText.text.toString().trim().lowercase() // Convert to lowercase
+        val password = binding.passwordEditText.text.toString().trim()
+
+        // Log the username being used for login
+        Log.d("LoginUser", "Attempting to login with username: $username")
+
+        binding.progressBar.visibility = View.VISIBLE
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users").whereEqualTo("username", username).get()  // Query with lowercase username
+            .addOnSuccessListener { querySnapshot ->
+                binding.progressBar.visibility = View.GONE
+
+                // Log the result of the query
+                Log.d("LoginUser", "Query returned ${querySnapshot.size()} document(s)")
+
+                if (!querySnapshot.isEmpty) {
+                    val email = querySnapshot.documents[0].getString("email")
+                    email?.let {
+                        // Log the email being used to sign in
+                        Log.d("LoginUser", "Found email: $email")
+
+                        auth.signInWithEmailAndPassword(it, password)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, ClientDashboardActivity::class.java))
+                                    finish()
+                                } else {
+                                    Toast.makeText(this, "Login Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                    }
+                } else {
+                    // Log if no user was found
+                    Log.d("LoginUser", "No user found with this username")
+                    Toast.makeText(this, "No user found with this username", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                binding.progressBar.visibility = View.GONE
+                // Log the error if the query fails
+                Log.e("LoginUser", "Error fetching user data: ${e.message}")
+                Toast.makeText(this, "Error fetching user data: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
+
 }

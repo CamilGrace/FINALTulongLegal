@@ -24,17 +24,20 @@
 
         <!-- Other Activities -->
         <activity android:name=".LoginActivity"/>
-        <activity android:name=".RoleRegistrationActivity" />
+        <activity android:name=".RoleSelectionActivity" />
         <activity android:name=".ClientRegistrationActivity" />
         <activity android:name=".LawyerRegistrationActivity" />
         <activity android:name=".ClientDashboardActivity" />
         <activity android:name=".ClientSettingsActivity" />
         <activity android:name=".ClientProfileActivity" />
+        <activity android:name=".ClientEditProfileActivity" />
         <activity android:name=".LawyerMatchingActivity" />
         <activity android:name=".MatchesFoundActivity" />
         <activity android:name=".LawyerLoginActivity" />
-        <activity android:name=".LawyerDashboardActivity" />
         <activity android:name=".DocumentLibraryActivity" />
+        <activity android:name=".LawyerDashboardActivity" />
+        <activity android:name=".LawyerProfileActivity" />
+        <activity android:name=".LawyerEditProfileActivity" />
 
 
     </application>

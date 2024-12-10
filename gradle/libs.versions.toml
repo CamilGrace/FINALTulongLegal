@@ -3,6 +3,7 @@ agp = "8.6.0"
 compactCalendarView = "3.0.0"
 firebaseAuthKtx = "23.1.0"
 firebaseBom = "33.6.0"
+firebaseBomVersion = "33.7.0"
 firebaseFirestoreKtx = "25.1.1"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
@@ -16,12 +17,16 @@ constraintlayout = "2.1.4"
 cardview = "1.0.0"
 materialCalendarview = "2.0.0"
 materialCalendarviewVersion = "2.0.1"
+firebaseFirestore = "25.1.1"
+prolificinteractiveMaterialCalendarview = "1.8.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 compact-calendar-view = { module = "com.github.sundeepk:compact-calendar-view", version.ref = "compactCalendarView" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-bom-v3370 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -32,7 +37,9 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
 material-calendarview = { module = "com.prolificinteractive:material-calendarview", version.ref = "materialCalendarview" }
+material-calendarview-v180 = { module = "com.prolificinteractive:material-calendarview", version.ref = "prolificinteractiveMaterialCalendarview" }
 material-calendarview-v201 = { module = "com.prolificinteractive:material-calendarview", version.ref = "materialCalendarviewVersion" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

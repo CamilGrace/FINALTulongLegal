@@ -42,10 +42,6 @@ class ClientDashboardActivity : AppCompatActivity() {
                     startActivity(Intent(this, ClientSettingsActivity::class.java))
                 }
 
-                R.id.nav_sign_out -> {
-                    // Sign out the user and navigate to LoginActivity
-                    signOutUser()
-                }
             }
 
             // Close the drawer after an item is selected

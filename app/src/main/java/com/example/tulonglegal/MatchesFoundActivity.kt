@@ -1,6 +1,5 @@
 package com.example.tulonglegal
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,25 +7,26 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
 
 class MatchesFoundActivity : AppCompatActivity() {
+
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var lawyerList: List<Lawyer> // To hold the fetched lawyers data
+    private lateinit var selectedLegalCategory: String // Category passed from LawyerMatchingActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.matches_found)
 
-        // Sample data for the carousel
-        val lawyers = listOf(
-            Lawyer("Lawyer 1", "Criminal Law", 10, 2000.0),
-            Lawyer("Lawyer 2", "Family Law", 8, 1500.0),
-            Lawyer("Lawyer 3", "Corporate Law", 15, 3000.0),
-            Lawyer("Lawyer 4", "Civil Law", 12, 1800.0),
-            Lawyer("Lawyer 5", "Intellectual Property", 6, 2500.0)
-        )
+        // Get the selected legal category from the Intent
+        selectedLegalCategory = intent.getStringExtra("selectedLegalCategory") ?: ""
+
+        firestore = FirebaseFirestore.getInstance()
 
         // Initialize RecyclerView for the carousel
         val recyclerView = findViewById<RecyclerView>(R.id.carouselRecyclerView)
@@ -36,30 +36,56 @@ class MatchesFoundActivity : AppCompatActivity() {
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(recyclerView)
 
-        // Set up the carousel adapter with the lawyer list
-        recyclerView.adapter = CarouselAdapter(lawyers)
+        // Fetch the lawyers data from Firestore
+        fetchLawyersData(recyclerView)
+    }
 
-        // Programmatically scroll to the first item to make sure it's centered initially
-        recyclerView.post {
-            recyclerView.scrollToPosition(0)
-        }
+    // Fetch Lawyers data from Firestore
+    private fun fetchLawyersData(recyclerView: RecyclerView) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        userId?.let {
+            firestore.collection("lawyers")
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    lawyerList = querySnapshot.documents.mapNotNull { document ->
+                        document.toObject(Lawyer::class.java)
+                    }
 
-        // Button to go to the next activity
-        val btnFindMyLawyer = findViewById<AppCompatButton>(R.id.btnMessage)
-        btnFindMyLawyer.setOnClickListener {
-            // Handle the logic when the button is clicked
-            Toast.makeText(applicationContext, "Finding a lawyer...", Toast.LENGTH_SHORT).show()
-            // Go to the next activity (example: Lawyer Matching)
-            startActivity(Intent(this, LawyerMatchingActivity::class.java))
+                    // Filter the lawyers based on the selected legal category
+                    val filteredLawyers = lawyerList.filter { lawyer ->
+                        lawyer.legalspecialization.contains(selectedLegalCategory, ignoreCase = true)
+                    }
+
+                    // If no matches found, display "No Matches Found"
+                    val noMatchesTextView = findViewById<TextView>(R.id.textNoMatchesFound)
+                    if (filteredLawyers.isEmpty()) {
+                        noMatchesTextView.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE // Hide RecyclerView
+                    } else {
+                        noMatchesTextView.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
+                        // Set up the carousel adapter with the filtered data
+                        recyclerView.adapter = CarouselAdapter(filteredLawyers)
+                    }
+
+                    // Programmatically scroll to the first item to make sure it's centered initially
+                    recyclerView.post {
+                        recyclerView.scrollToPosition(0)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Error fetching data: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 
-    // Data class for Lawyer
+    // Data class for Lawyer (matches Firestore fields)
     data class Lawyer(
-        val name: String,
-        val lawCategory: String,
-        val yearsOfExperience: Int,
-        val consultationFee: Double // In pesos
+        val fullName: String = "",
+        val gender: String = "",
+        val legalspecialization: String = "",
+        val yearsofexp: Int = 0,
+        val consultationfee: Double = 0.0 // In pesos
     )
 
     // Carousel Adapter Implementation
@@ -67,10 +93,11 @@ class MatchesFoundActivity : AppCompatActivity() {
 
         // ViewHolder class for the adapter
         class CarouselViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val nameTextView: TextView = itemView.findViewById(R.id.textItemName)
-            val lawCategoryTextView: TextView = itemView.findViewById(R.id.textItemCategory)
-            val experienceTextView: TextView = itemView.findViewById(R.id.textItemExperience)
-            val feeTextView: TextView = itemView.findViewById(R.id.textItemFee)
+            val nameTextView: TextView = itemView.findViewById(R.id.textFullname)
+            val genderTextView: TextView = itemView.findViewById(R.id.textGender)
+            val lawCategoryTextView: TextView = itemView.findViewById(R.id.userLegal)
+            val experienceTextView: TextView = itemView.findViewById(R.id.userYearsofExp)
+            val feeTextView: TextView = itemView.findViewById(R.id.userConsultationFee)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarouselViewHolder {
@@ -80,10 +107,11 @@ class MatchesFoundActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: CarouselViewHolder, position: Int) {
             val lawyer = items[position]
-            holder.nameTextView.text = lawyer.name
-            holder.lawCategoryTextView.text = lawyer.lawCategory
-            holder.experienceTextView.text = "${lawyer.yearsOfExperience} years of experience"
-            holder.feeTextView.text = "Consultation Fee: ₱${lawyer.consultationFee}"
+            holder.nameTextView.text = "Atty. ${lawyer.fullName}"
+            holder.genderTextView.text = lawyer.gender
+            holder.lawCategoryTextView.text = lawyer.legalspecialization
+            holder.experienceTextView.text = "${lawyer.yearsofexp} years of experience"
+            holder.feeTextView.text = "${lawyer.consultationfee} pesos"
         }
 
         override fun getItemCount(): Int = items.size

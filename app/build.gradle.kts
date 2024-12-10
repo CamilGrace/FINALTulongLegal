@@ -48,12 +48,12 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.cardview)
-
-    // Exclude support-compat from compact-calendar-view if it's being pulled in
-    implementation("com.github.sundeepk:compact-calendar-view:3.0.0") {
-        exclude("com.android.support", "support-compat")
-    }
-
+    implementation(platform(libs.firebase.bom.v3370))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.firestore)
+    implementation("com.github.mhiew:material-calendarview:2.0.3")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

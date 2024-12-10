@@ -1,122 +1,107 @@
 package com.example.tulonglegal
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.example.tulonglegal.databinding.LawyerLoginBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LawyerLoginActivity : AppCompatActivity() {
 
     private lateinit var binding: LawyerLoginBinding
-    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Initialize View Binding
         binding = LawyerLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sharedPreferences = getSharedPreferences("LawyerPrefs", MODE_PRIVATE)
+        auth = FirebaseAuth.getInstance()
 
-        // Set up the "Back" button functionality
         binding.imageBack.setOnClickListener {
-            finish() // Close this activity and return to the previous one
+            finish()
         }
 
-        // Add TextWatchers for the username and password fields
-        binding.usernameEditText.addTextChangedListener(loginTextWatcher)
-        binding.passwordEditText.addTextChangedListener(loginTextWatcher)
+        // Enable login button only when both fields are filled
+        binding.usernameEditText.addTextChangedListener(textWatcher)
+        binding.passwordEditText.addTextChangedListener(textWatcher)
 
-        // Handle Login Button Click
         binding.loginButton.setOnClickListener {
-            val usernameInput = binding.usernameEditText.text.toString().trim()
-            val passwordInput = binding.passwordEditText.text.toString().trim()
-
-            // Check if input fields are valid
-            if (usernameInput.isNotEmpty() && passwordInput.isNotEmpty()) {
-                // Show Progress Bar
-                showProgressBar(true)
-
-                // Simulate login verification (replace with actual logic)
-                val storedPassword = sharedPreferences.getString(usernameInput, null)
-                if (storedPassword == passwordInput) {
-                    // Save login state in SharedPreferences
-                    val editor = sharedPreferences.edit()
-                    editor.putBoolean("isLoggedIn", true)  // Set user as logged in
-                    editor.putString("username", usernameInput)  // Save username
-                    editor.apply()
-
-                    // Navigate to LawyerDashboardActivity
-                    val intent = Intent(this, LawyerDashboardActivity::class.java)
-                    startActivity(intent)
-                    finish()  // Close the login screen
-                } else {
-                    // Handle login failure
-                    Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show()
-                }
-
-                // Hide Progress Bar after login attempt
-                showProgressBar(false)
-            } else {
-                // Handle empty username/password
-                Toast.makeText(this, "Please fill in both fields", Toast.LENGTH_SHORT).show()
-            }
+            loginLawyer()
         }
 
-        // Set the click listener for "Sign up here" text
         binding.signupText.setOnClickListener {
-            val intent = Intent(this, LawyerRegistrationActivity::class.java)
-            startActivity(intent)  // Start LawyerRegistrationActivity
+            val intent = Intent(this, RoleSelectionActivity::class.java)
+            startActivity(intent)
         }
     }
 
-    // TextWatcher to enable or disable login button based on input
-    private val loginTextWatcher = object : TextWatcher {
+    private val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val usernameInput = binding.usernameEditText.text.toString().trim()
-            val passwordInput = binding.passwordEditText.text.toString().trim()
-
-            // Enable the login button only if both fields are not empty
-            val isInputValid = usernameInput.isNotEmpty() && passwordInput.isNotEmpty()
-            binding.loginButton.isEnabled = isInputValid
-
-            // Change button background based on its state
-            val buttonBackground = if (isInputValid) {
-                R.drawable.button_enabled // Your enabled button background
-            } else {
-                R.drawable.button_disabled // Your disabled button background
-            }
-            binding.loginButton.background = ContextCompat.getDrawable(this@LawyerLoginActivity, buttonBackground)
-
-            // Change button text color based on its state
-            val buttonTextColor = if (isInputValid) {
-                ContextCompat.getColor(this@LawyerLoginActivity, android.R.color.white) // White text when enabled
-            } else {
-                ContextCompat.getColor(this@LawyerLoginActivity, android.R.color.black) // Dark gray text when disabled
-            }
-            binding.loginButton.setTextColor(buttonTextColor)
+            binding.loginButton.isEnabled = binding.usernameEditText.text.toString().isNotEmpty() &&
+                    binding.passwordEditText.text.toString().isNotEmpty()
+            binding.loginButton.setBackgroundResource(
+                if (binding.loginButton.isEnabled) R.drawable.button_enabled else R.drawable.button_disabled
+            )
         }
 
         override fun afterTextChanged(s: Editable?) {}
     }
 
-    // Function to show or hide the progress bar
-    private fun showProgressBar(show: Boolean) {
-        if (show) {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.loginButton.isEnabled = false // Disable login button while loading
-        } else {
-            binding.progressBar.visibility = View.GONE
-            binding.loginButton.isEnabled = true // Enable login button after loading
-        }
+    private fun loginLawyer() {
+        val username = binding.usernameEditText.text.toString().trim().lowercase() // Convert to lowercase
+        val password = binding.passwordEditText.text.toString().trim()
+
+        // Log the username being used for login
+        Log.d("LoginLawyer", "Attempting to login with username: $username")
+
+        binding.progressBar.visibility = View.VISIBLE
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("lawyers").whereEqualTo("username", username).get()  // Query with lowercase username
+            .addOnSuccessListener { querySnapshot ->
+                binding.progressBar.visibility = View.GONE
+
+                // Log the result of the query
+                Log.d("LoginLawyer", "Query returned ${querySnapshot.size()} document(s)")
+
+                if (!querySnapshot.isEmpty) {
+                    val email = querySnapshot.documents[0].getString("email")
+                    email?.let {
+                        // Log the email being used to sign in
+                        Log.d("LoginLawyer", "Found email: $email")
+
+                        auth.signInWithEmailAndPassword(it, password)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(this, "Lawyer Login Successful", Toast.LENGTH_SHORT).show()
+                                    // Navigate to the next screen (e.g., Lawyer Dashboard)
+                                    startActivity(Intent(this, LawyerDashboardActivity::class.java))
+                                    finish()
+                                } else {
+                                    Toast.makeText(this, "Login Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                    }
+                } else {
+                    // Log if no lawyer was found
+                    Log.d("LoginLawyer", "No lawyer found with this username")
+                    Toast.makeText(this, "No lawyer found with this username", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                binding.progressBar.visibility = View.GONE
+                // Log the error if the query fails
+                Log.e("LoginLawyer", "Error fetching lawyer data: ${e.message}")
+                Toast.makeText(this, "Error fetching lawyer data: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }
